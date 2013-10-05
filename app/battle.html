@@ -131,7 +131,7 @@ var global_data =
 var globe = new battle_field(global_data[0].monsters,global_data[1].monsters);
 page_init = function()
 {
-svg = d3.select("#graph")
+svg = d3.select("body")
     .append("svg")
       .attr("width",320)
       .attr("height",470);
@@ -142,7 +142,6 @@ svg = d3.select("#graph")
 </script>
 
 <body onload="page_init()">
-<div id="graph"></div>
 </body>
 </html>
 
