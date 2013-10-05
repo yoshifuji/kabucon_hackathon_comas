@@ -19,8 +19,12 @@ var battle_field = function(self,opp)
   this.attack_scale_ = null;
   this.defence_scale_ = null;
   this.speed_scale_ = null;
+  this.filter_selection_ = null;
+  
   this.init = function(selection)
   {
+    this.self_.forEach(function(d){d.selected = false;});
+    this.opp_.forEach(function(d){d.selected = false;});
     this.life_scale_ = d3.scale.linear().domain([0,d3.max([d3.max(this.self_.map(function(d){return +d.life;})),d3.max(this.opp_.map(function(d){return +d.life;}))])]).range([0,80]);
     this.attack_scale_ = d3.scale.linear().domain([0,d3.max([d3.max(this.self_.map(function(d){return +d.attack;})),d3.max(this.opp_.map(function(d){return +d.attack;}))])]).range([0,80]);
     this.defence_scale_ = d3.scale.linear().domain([0,d3.max([d3.max(this.self_.map(function(d){return +d.defence;})),d3.max(this.opp_.map(function(d){return +d.defence;}))])]).range([0,80]);
@@ -43,7 +47,6 @@ var battle_field = function(self,opp)
       .attr("y",0)
       .attr("width",this.unit_width_)
       .attr("height",this.unit_height_);
-      //<image xlink:href="firefox.jpg" x="0" y="0" height="50px" width="50px"/>
     tmp.append("image")
       .attr("xlink:href", function(d){return d.icon;})
       .attr("x",0)
@@ -84,6 +87,25 @@ var battle_field = function(self,opp)
       .attr("width",function(d){return this.speed_scale_(d.speed);}.bind(this))
       .attr("height",15)
       .attr("fill","#FF0");
+    this.filter_selection_ = tmp.append("rect")
+      .attr("x",0)
+      .attr("y",0)
+      .attr("width",this.unit_width_)
+      .attr("height",this.unit_height_)
+      .attr("fill","#000")
+      .attr("opacity",function(d){return d.selected?0.0:0.8;})
+      .on("click",function(d,i){console.log([d,i]);this.select_self(i)}.bind(this));
+  }
+  this.select_self = function(i)
+  {
+    this.self_.forEach(function(d){d.selected = false;});
+    this.self_[i].selected = true;
+    this.update_selection();
+  }
+  this.update_selection = function()
+  {
+    this.filter_selection_
+      .attr("opacity",function(d){return d.selected?0.0:0.8;});
   }
 }
 var global_data =
