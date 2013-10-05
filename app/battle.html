@@ -13,7 +13,7 @@ var battle_field = function(self,opp)
   this.selection_ = null;
   this.self_selection_ = null;
   this.opp_selection_ = null;
-  this.unit_width_ = +100;
+  this.unit_width_ = +150;
   this.unit_height_ = +60;
   this.life_scale_ = null;
   this.attack_scale_ = null;
@@ -21,10 +21,10 @@ var battle_field = function(self,opp)
   this.speed_scale_ = null;
   this.init = function(selection)
   {
-    this.life_scale_ = d3.scale.linear().domain([0,d3.max([d3.max(this.self_.map(function(d){return d.life;})),d3.max(this.opp_.map(function(d){return d.life;}))])]).range[0,40]
-    this.attack_scale_ = d3.scale.linear().domain([0,d3.max([d3.max(this.self_.map(function(d){return d.attack;})),d3.max(this.opp_.map(function(d){return d.attack;}))])]).range[0,40]
-    this.defence_scale_ = d3.scale.linear().domain([0,d3.max([d3.max(this.self_.map(function(d){return d.defence;})),d3.max(this.opp_.map(function(d){return d.defence;}))])]).range[0,40]
-    this.speed_scale_ = d3.scale.linear().domain([0,d3.max([d3.max(this.self_.map(function(d){return d.speed;})),d3.max(this.opp_.map(function(d){return d.speed;}))])]).range[0,40]
+    this.life_scale_ = d3.scale.linear().domain([0,d3.max([d3.max(this.self_.map(function(d){return +d.life;})),d3.max(this.opp_.map(function(d){return +d.life;}))])]).range([0,80]);
+    this.attack_scale_ = d3.scale.linear().domain([0,d3.max([d3.max(this.self_.map(function(d){return +d.attack;})),d3.max(this.opp_.map(function(d){return +d.attack;}))])]).range([0,80]);
+    this.defence_scale_ = d3.scale.linear().domain([0,d3.max([d3.max(this.self_.map(function(d){return +d.defence;})),d3.max(this.opp_.map(function(d){return +d.defence;}))])]).range([0,80]);
+    this.speed_scale_ = d3.scale.linear().domain([0,d3.max([d3.max(this.self_.map(function(d){return +d.speed;})),d3.max(this.opp_.map(function(d){return +d.speed;}))])]).range([0,80]);
     var data = [ this.self_, this.opp_];
     this.selection_ = selection.selectAll("g")
       .data(data)
@@ -36,7 +36,7 @@ var battle_field = function(self,opp)
       .data(function(d,i){return d;})
       .enter()
       .append("g")
-        .attr("transform",function(d,i){return "translate("+(this.unit_width_*(Math.floor(i/3)+1))+","+(this.unit_height_*(i%3)+10)+")";}.bind(this));
+        .attr("transform",function(d,i){return "translate("+(this.unit_width_*(Math.floor(i/3)))+","+(this.unit_height_*(i%3)+10)+")";}.bind(this));
     tmp.append("rect")
       .attr("class","node")
       .attr("x",0)
@@ -60,6 +60,30 @@ var battle_field = function(self,opp)
         .attr("y",function(d,i){return i*(this.unit_height_/4);}.bind(this))
         .attr("height",this.unit_height_/4)
         .attr("width",this.unit_height_/4);
+    tmp.append("rect")
+      .attr("x",60)
+      .attr("y",0)
+      .attr("width",function(d){console.log(this);return this.life_scale_(d.life);}.bind(this))
+      .attr("height",15)
+      .attr("fill","#0F0");
+    tmp.append("rect")
+      .attr("x",60)
+      .attr("y",15)
+      .attr("width",function(d){return this.attack_scale_(d.attack);}.bind(this))
+      .attr("height",15)
+      .attr("fill","#F00");
+    tmp.append("rect")
+      .attr("x",60)
+      .attr("y",30)
+      .attr("width",function(d){return this.defence_scale_(d.defence);}.bind(this))
+      .attr("height",15)
+      .attr("fill","#00F");
+    tmp.append("rect")
+      .attr("x",60)
+      .attr("y",45)
+      .attr("width",function(d){return this.speed_scale_(d.speed);}.bind(this))
+      .attr("height",15)
+      .attr("fill","#FF0");
   }
 }
 var global_data =
