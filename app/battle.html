@@ -131,7 +131,7 @@ var global_data =
 var globe = new battle_field(global_data[0].monsters,global_data[1].monsters);
 page_init = function()
 {
-svg = d3.select("body")
+svg = d3.select("#graph")
     .append("svg")
       .attr("width",320)
       .attr("height",500);
@@ -142,7 +142,7 @@ svg = d3.select("body")
 </script>
 
 <body onload="page_init()">
-
+<div id="graph"></div>
 <center>ただいま交戦中！</center>
 </body>
 </html>
