@@ -13,8 +13,18 @@ var battle_field = function(self,opp)
   this.selection_ = null;
   this.self_selection_ = null;
   this.opp_selection_ = null;
+  this.unit_width_ = +100;
+  this.unit_height_ = +60;
+  this.life_scale_ = null;
+  this.attack_scale_ = null;
+  this.defence_scale_ = null;
+  this.speed_scale_ = null;
   this.init = function(selection)
   {
+    this.life_scale_ = d3.scale.linear().domain([0,d3.max([d3.max(this.self_.map(function(d){return d.life;})),d3.max(this.opp_.map(function(d){return d.life;}))])]).range[0,40]
+    this.attack_scale_ = d3.scale.linear().domain([0,d3.max([d3.max(this.self_.map(function(d){return d.attack;})),d3.max(this.opp_.map(function(d){return d.attack;}))])]).range[0,40]
+    this.defence_scale_ = d3.scale.linear().domain([0,d3.max([d3.max(this.self_.map(function(d){return d.defence;})),d3.max(this.opp_.map(function(d){return d.defence;}))])]).range[0,40]
+    this.speed_scale_ = d3.scale.linear().domain([0,d3.max([d3.max(this.self_.map(function(d){return d.speed;})),d3.max(this.opp_.map(function(d){return d.speed;}))])]).range[0,40]
     var data = [ this.self_, this.opp_];
     this.selection_ = selection.selectAll("g")
       .data(data)
@@ -26,20 +36,53 @@ var battle_field = function(self,opp)
       .data(function(d,i){return d;})
       .enter()
       .append("g")
-        .attr("transform",function(d,i){return "translate("+(60*Math.floor(i/3))+","+(50*(i%3))+")";});
+        .attr("transform",function(d,i){return "translate("+(this.unit_width_*(Math.floor(i/3)+1))+","+(this.unit_height_*(i%3)+10)+")";}.bind(this));
     tmp.append("rect")
       .attr("class","node")
       .attr("x",0)
       .attr("y",0)
-      .attr("width",60)
-      .attr("height",50);
+      .attr("width",this.unit_width_)
+      .attr("height",this.unit_height_);
+      //<image xlink:href="firefox.jpg" x="0" y="0" height="50px" width="50px"/>
+    tmp.append("image")
+      .attr("xlink:href", function(d){return d.icon;})
+      .attr("x",0)
+      .attr("y",0)
+      .attr("height",40)
+      .attr("width",40);
+    var icons = ["heart.png","sword.png","shield.png","shoes.png"];
+    tmp.selectAll(".ic")
+      .data(function(d){return icons;})
+      .enter()
+        .append("image")
+        .attr("xlink:href", function(d){return "images/"+d;})
+        .attr("x",40)
+        .attr("y",function(d,i){return i*(this.unit_height_/4);}.bind(this))
+        .attr("height",this.unit_height_/4)
+        .attr("width",this.unit_height_/4);
   }
-  
 }
-var globe = new battle_field([{name:"hoge",attack:1,life:1,defence:2,speef:1,attribute:"hoge"},{name:"hoge",attack:1,life:1,defence:2,speef:1,attribute:"hoge"},{name:"hoge",attack:1,life:1,defence:2,speef:1,attribute:"hoge"},
-    {name:"hoge",attack:1,life:1,defence:2,speef:1,attribute:"hoge"},{name:"hoge",attack:1,life:1,defence:2,speef:1,attribute:"hoge"},{name:"hoge",attack:1,life:1,defence:2,speef:1,attribute:"hoge"}],
-  [{name:"hoge",attack:1,life:1,defence:2,speef:1,attribute:"hoge"},{name:"hoge",attack:1,life:1,defence:2,speef:1,attribute:"hoge"},{name:"hoge",attack:1,life:1,defence:2,speef:1,attribute:"hoge"},
-    {name:"hoge",attack:1,life:1,defence:2,speef:1,attribute:"hoge"},{name:"hoge",attack:1,life:1,defence:2,speef:1,attribute:"hoge"},{name:"hoge",attack:1,life:1,defence:2,speef:1,attribute:"hoge"}]);
+var global_data =
+[
+ { "username":"", 
+ monsters:[ 
+ { "name":"任天堂株式会社", "attack":"10990", "defence":"155694", "speed":"472100", "attribute":"ゲーム機ハード、ソフトで総合首位。海外シェア高い。ドル建て資産多く期末為替で経常益変動", "id":"1", "life":"513876", "dextality":"1945", "luck":"36.4", "icon":"http://www.inside-games.jp/imgs/zoom/129283.jpg" },
+ { "name":"トヨタ自動車株式会社", "attack":"6180", "defence":"213086", "speed":"70439", "attribute":"自動車メーカー世界３強。ＨＶ技術で先行。国内登録車シェア５割弱。傘下に日野、ダイハツ等", "id":"2", "life":"435792", "dextality":"68978", "luck":"38.6", "icon":"http://netdna.webdesignerdepot.com/uploads/2009/03/toyota.gif" },
+ { "name":"パナソニック株式会社", "attack":"915", "defence":"224454", "speed":"134258", "attribute":"総合家電大手。ＡＶ機器、白モノ家電が主力。電池などのデバイス事業、照明、住宅設備も展開", "id":"4", "life":"123309", "dextality":"292163", "luck":"44.5", "icon":"http://netdna.webdesignerdepot.com/uploads/2009/03/panasonic.gif" },
+ { "name":"日本マクドナルドホールディングス(株)", "attack":"2703", "defence":"114200", "speed":"359391", "attribute":"外食国内首位級。世界的ハンバーガーチェーン。直営は大都市圏中心に展開。米国本社の影響大", "id":"5", "life":"308597", "dextality":"3055", "luck":"32.1", "icon":"http://aafprofessional.files.wordpress.com/2012/02/mcdonalds.png" },
+ { "name":"(株)三菱ＵＦＪフィナンシャル・グループ ", "attack":"611", "defence":"439357", "speed":"268338", "attribute":"国内最大の金融グループ。傘下に銀行、信託、証券、カード、リース等。米州・アジア展開急ぐ", "id":"6", "life":"865406", "dextality":"141638", "luck":"36499", "icon":"http://mufgkenpo.or.jp/member/images/main_top_15.gif" },
+ { "name":"日産自動車(株)", "attack":"969", "defence":"15141", "speed":"14648", "attribute":"自動車大手、仏ルノー傘下で開発や購買など共同展開、合計販売台数世界４位、新興国を強化", "id":"7", "life":"4380", "dextality":"23605", "luck":"42.6", "icon":"http://img.zukanda.jp/639602" }
+ ] } ,
+ { "username":"",
+ monsters:[ 
+ { "name":"ソニー(株)", "attack":"2017", "defence":"8539", "speed":"17187", "attribute":"ＡＶ機器大手。海外でブランド力絶大。ゲーム、映画、金融等に多角化。エレキ事業を再生中", "id":"9", "life":"2041", "dextality":"1012", "luck":"42", "icon":"" },
+ { "name":"(株)ありがとうサービス", "attack":"1790", "defence":"2504", "speed":"1400", "attribute":"ブックオフ、ハードオフＦＣ。フードはモスバーガーＦＣと自社展開。愛媛地盤に九州出店強化", "id":"11", "life":"1707", "dextality":"953", "luck":"33.2", "icon":"" },
+ { "name":"(株)モスフードサービス", "attack":"1860", "defence":"62", "speed":"116", "attribute":"「モスバーガー」展開。業界２位、商品力に定評。ＦＣ比率８割弱。ダスキンと資本・業務提携", "id":"12", "life":"59", "dextality":"32009", "luck":"40.3", "icon":"" },
+ { "name":"(株)コロワイド", "attack":"965", "defence":"325", "speed":"315", "attribute":"居酒屋「甘太郎」等を展開。Ｍ＆Ａ推進で０５年にアトム、１２年秋、焼き肉「牛角」のレインズを買収", "id":"13", "life":"72", "dextality":"75284", "luck":"36.3", "icon":"" },
+ { "name":"清水建設(株)", "attack":"461", "defence":"4374", "speed":"2021", "attribute":"業界最大手の一角。首都圏、民間建築が主力。環境エネルギーに注力。海外受注比率は１割未満", "id":"14", "life":"363", "dextality":"10945", "luck":"44.7", "icon":"" },
+ { "name":"(株)ボルテージ", "attack":"981", "defence":"1417", "speed":"1324", "attribute":"恋愛シミュレーションゲーム先駆。携帯公式サイト向けやスマホ向けに配信。顧客は女性に特化", "id":"15", "life":"4939", "dextality":"5034", "luck":"282", "icon":"27.4" }
+ ] }];
+var globe = new battle_field(global_data[0].monsters,global_data[1].monsters);
 page_init = function()
 {
 svg = d3.select("body")
