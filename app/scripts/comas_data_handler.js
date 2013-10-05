@@ -1,22 +1,16 @@
 
 monster = function(data)
 {
-  var name = data.name;
-  var attack = data.attack;
-  var defence = data.defence;
-  var speed = data.speed;
-  var attribute = data.attribute;
-  var id = data.id;
-  var life = data.life;
-  var speed = data.speed;
-  var dextality = data.dextality;
-  var luck = data.luck;
-  var icon = data.icon;
-
-  append_monster = function(selection)
-  {
-    selection.append("g");
-  }
+  this.name = data.name;
+  this.attack = data.attack;
+  this.defence = data.defence;
+  this.speed = data.speed;
+  this.attribute = data.attribute;
+  this.id = data.id;
+  this.life = data.life;
+  this.dextality = data.dextality;
+  this.luck = data.luck;
+  this.icon = data.icon;
 };
 
 

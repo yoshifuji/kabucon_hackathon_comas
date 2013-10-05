@@ -5,10 +5,54 @@
 <script src="scripts/vendor/d3.v3.min.js" type="text/javascript"></script>
 <script src="scripts/vendor/jquery.min.js" type="text/javascript"></script>
 <script src="scripts/comas_data_handler.js" type="text/javascript"></script>
+<script type="text/javascript">
+var battle_field = function(self,opp)
+{
+  this.self_ = self;
+  this.opp_ = opp;
+  this.selection_ = null;
+  this.self_selection_ = null;
+  this.opp_selection_ = null;
+  this.init = function(selection)
+  {
+    var data = [ this.self_, this.opp_];
+    this.selection_ = selection.selectAll("g")
+      .data(data)
+      .enter()
+        .append("g")
+          .attr("transform",function(d,i){return "translate(0,"+(200*i)+")";});
+    console.log(this.selection_);
+    var tmp = this.selection_.selectAll("g")
+      .data(function(d,i){return d;})
+      .enter()
+      .append("g")
+        .attr("transform",function(d,i){return "translate("+(60*Math.floor(i/3))+","+(50*(i%3))+")";});
+    tmp.append("rect")
+      .attr("class","node")
+      .attr("x",0)
+      .attr("y",0)
+      .attr("width",60)
+      .attr("height",50);
+  }
+  
+}
+var globe = new battle_field([{name:"hoge",attack:1,life:1,defence:2,speef:1,attribute:"hoge"},{name:"hoge",attack:1,life:1,defence:2,speef:1,attribute:"hoge"},{name:"hoge",attack:1,life:1,defence:2,speef:1,attribute:"hoge"},
+    {name:"hoge",attack:1,life:1,defence:2,speef:1,attribute:"hoge"},{name:"hoge",attack:1,life:1,defence:2,speef:1,attribute:"hoge"},{name:"hoge",attack:1,life:1,defence:2,speef:1,attribute:"hoge"}],
+  [{name:"hoge",attack:1,life:1,defence:2,speef:1,attribute:"hoge"},{name:"hoge",attack:1,life:1,defence:2,speef:1,attribute:"hoge"},{name:"hoge",attack:1,life:1,defence:2,speef:1,attribute:"hoge"},
+    {name:"hoge",attack:1,life:1,defence:2,speef:1,attribute:"hoge"},{name:"hoge",attack:1,life:1,defence:2,speef:1,attribute:"hoge"},{name:"hoge",attack:1,life:1,defence:2,speef:1,attribute:"hoge"}]);
+page_init = function()
+{
+svg = d3.select("body")
+    .append("svg")
+      .attr("width",320)
+      .attr("height",500);
+  console.log(globe);
+  globe.init(svg);
+}
 
+</script>
 
-<body>
-
+<body onload="page_init()">
 
 
 </body>
