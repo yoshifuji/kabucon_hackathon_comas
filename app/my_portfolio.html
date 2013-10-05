@@ -19,6 +19,13 @@ var battle_field = function(self)
   
   this.init = function(selection)
   {
+    selection.append("rect")
+      .attr("x",0)
+      .attr("y",0)
+      .attr("height",selection.attr("height"))
+      .attr("width",selection.attr("width"))
+      .attr("fill","#FFF")
+      .on("click",this.select_all.bind(this));
     this.layouter_ = d3.layout.force()
       .charge(-800)
       .linkDistance(30)
@@ -107,9 +114,13 @@ var battle_field = function(self)
   this.update_selection = function()
   {
     this.filter_selection_
-      .attr("opacity",function(d){return d.selected?0.0:0.8;});
+      .attr("opacity",function(d){return d.selected?0.0:0.5;});
   }
-  
+  this.select_all = function()
+  {
+    this.self_.forEach(function(d){d.selected = true;});
+    this.update_selection();
+  }
 }
 var global_data =
 [

@@ -23,6 +23,13 @@ var battle_field = function(self,opp)
   
   this.init = function(selection)
   {
+    selection.append("rect")
+      .attr("x",0)
+      .attr("y",0)
+      .attr("height",selection.attr("height"))
+      .attr("width",selection.attr("width"))
+      .attr("fill","#FFF")
+      .on("click",this.select_all.bind(this));
     this.self_.forEach(function(d){d.selected = false;});
     this.opp_.forEach(function(d){d.selected = false;});
     this.life_scale_ = d3.scale.linear().domain([0,d3.max([d3.max(this.self_.map(function(d){return +d.life;})),d3.max(this.opp_.map(function(d){return +d.life;}))])]).range([0,80]);
@@ -107,6 +114,11 @@ var battle_field = function(self,opp)
     this.filter_selection_
       .attr("opacity",function(d){return d.selected?0.0:0.8;});
   }
+  this.select_all = function()
+  {
+    this.self_.forEach(function(d){d.selected = true;});
+    this.update_selection();
+  }
   
 }
 var global_data =
@@ -138,6 +150,7 @@ svg = d3.select("body")
       .attr("height",470);
   console.log(globe);
   globe.init(svg);
+  globe.select_all();
 }
 
 </script>
